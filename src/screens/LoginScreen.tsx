@@ -6,11 +6,13 @@ import {
   SafeAreaView,
   TouchableOpacity,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import {styled} from 'nativewind';
 import {AuthContext} from '@src/context/AuthContext';
 import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
 import MainView from '@src/components/MainView';
+import ColorList from '@src/styles/colors';
 
 const StyledView = styled(
   SafeAreaView,
@@ -58,7 +60,7 @@ const LoginScreen: React.FC = () => {
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="#525e75" />
-      <MainView>
+      <MainView bgClassname="bg-dark-blue">
         <StyledView style={styles.mainView}>
           <StyledText className="text-white">Вход</StyledText>
           <InputView>
@@ -94,8 +96,12 @@ const LoginScreen: React.FC = () => {
             />
           </View>
           {loading && (
-            <View>
-              <Text>Loading is true</Text>
+            <View className="items-center justify-items-center">
+              <ActivityIndicator
+                animating={loading}
+                color={ColorList.light}
+                size="large"
+              />
             </View>
           )}
         </StyledView>

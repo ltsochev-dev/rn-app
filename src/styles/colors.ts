@@ -13,4 +13,9 @@ const ColorList = {
 
 export type ThemeColor = keyof typeof ColorList;
 
+export const hexToRgba = (hex: string, opacity: number = 1) => {
+  const [r, g, b] = hex.match(/\w\w/g)!.map(x => parseInt(x, 16));
+  return `rgba(${r},${g},${b},${opacity})`;
+};
+
 export default ColorList;

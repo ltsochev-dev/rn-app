@@ -29,7 +29,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'HomeNav'>;
 
 const Drawer = createDrawerNavigator();
 
-const HomeNav = ({route}: Props) => {
+const HomeNav: React.FC<Props> = ({route}) => {
   const list = route.params?.list;
   const {data: categories, isLoading: categoriesLoading} =
     useGetCategoriesQuery();
@@ -70,9 +70,6 @@ const HomeNav = ({route}: Props) => {
         <Typography className="text-center">
           Look at me, we're the Typography now
         </Typography>
-        <Typography className="text-center">
-          Виж ме сега, аз съм типографията
-        </Typography>
         <Typography font="headerTitle">Ръкописен шрифт</Typography>
         <Typography font="headerTitle">Handwritten text</Typography>
       </View>
@@ -101,7 +98,7 @@ const HomeNav = ({route}: Props) => {
   );
 };
 
-const DrawerStack: React.FC = () => {
+const DrawerStack = () => {
   const auth = useContext(AuthContext);
   const {data: lists = [], isLoading} = useGetUserListsQuery(auth.user?.uid);
 

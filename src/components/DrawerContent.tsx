@@ -93,43 +93,41 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = props => {
           </Typography>
         </View>
       )}
-      <DrawerContentScrollView
-        {...props}
-        contentContainerStyle={styles.drawerContent}>
-        <Text className="text-center text-3xl font-bold text-tahiti-light">
-          Моите списъци
-        </Text>
+      <Text className="text-center text-3xl font-bold text-tahiti-light">
+        Моите списъци
+      </Text>
+      <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
-        <View className="flex justify-center items-center mt-10">
-          <Button
-            backgroundColor={ColorList['green-100']}
-            textColor={ColorList.white}
-            startIcon={<Icon name="add" size={20} color={ColorList.white} />}
-            onPress={() => setAddListVisibility(true)}
-            disabled={loading}>
-            Добави нов списък
-          </Button>
-        </View>
-        <View className="flex justify-center items-center mt-10 z-10">
-          <Button
-            backgroundColor={ColorList.error}
-            textColor={ColorList.white}
-            onPress={onLogoutClick}>
-            Излез от профила си
-          </Button>
-        </View>
       </DrawerContentScrollView>
-      <View className="absolute bottom-2 right-2">
-        <Typography className="text-tahiti-light text-sm">
-          {Config.version}
-        </Typography>
-      </View>
       <View className="absolute bottom-0 right-0 opacity-25 pointer-events-none">
         <Image
           source={require('@src/assets/images/recipe-list.png')}
           style={styles.backgroundImage}
           resizeMode="contain"
         />
+      </View>
+      <View className="flex justify-center items-center mt-10">
+        <Button
+          backgroundColor={ColorList['green-100']}
+          textColor={ColorList.white}
+          startIcon={<Icon name="add" size={20} color={ColorList.white} />}
+          onPress={() => setAddListVisibility(true)}
+          disabled={loading}>
+          Добави нов списък
+        </Button>
+      </View>
+      <View className="flex justify-center items-center mt-10 mb-4">
+        <Button
+          backgroundColor={ColorList.error}
+          textColor={ColorList.white}
+          onPress={onLogoutClick}>
+          Излез от профила си
+        </Button>
+      </View>
+      <View className="absolute bottom-2 right-2">
+        <Typography className="text-tahiti-light text-sm">
+          {Config.version}
+        </Typography>
       </View>
       <Dialog.Container
         visible={addListVisibility}
