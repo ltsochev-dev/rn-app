@@ -1,3 +1,14 @@
+import {
+  DrawerDescriptorMap,
+  DrawerNavigationHelpers,
+} from '@react-navigation/drawer/lib/typescript/src/types';
+import {
+  CommonActions,
+  DrawerActions,
+  DrawerNavigationState,
+  ParamListBase,
+  useLinkBuilder,
+} from '@react-navigation/native';
 import ColorList, {hexToRgba} from '@src/styles/colors';
 import React from 'react';
 import {
@@ -33,7 +44,7 @@ interface Props {
   allowFontScaling?: boolean;
 }
 
-const DrawerItem: React.FC<Props> = ({
+export const DrawerItem: React.FC<Props> = ({
   icon,
   label,
   labelStyle,
@@ -56,23 +67,113 @@ const DrawerItem: React.FC<Props> = ({
     ? activeBackgroundColor
     : inactiveBackgroundColor;
 
-  // @todo - finish this module
-
   const iconNode = icon ? icon({size: 24, focused, color}) : null;
   return (
-    <View collapsable={false} {...props}>
+    <View
+      collapsable={false}
+      {...props}
+      style={{...styles.itemStyles, backgroundColor, borderRadius}}>
       <TouchableOpacity
         onPress={onPress}
         accessibilityRole="button"
         accessibilityState={{selected: focused}}
-        className="flex-row">
+        style={styles.linkStyles}>
         <View>
           {iconNode}
-          <Text>Hello World</Text>
+          <Text className="text-tahiti-light">{label}</Text>
         </View>
       </TouchableOpacity>
     </View>
   );
 };
 
-export default DrawerItem;
+type ListProps = {
+  state: DrawerNavigationState<ParamListBase>;
+  navigation: DrawerNavigationHelpers;
+  descriptors: DrawerDescriptorMap;
+};
+
+export const DrawerItemList: React.FC<ListProps> = ({
+  state,
+  navigation,
+  descriptors,
+}) => {
+  const buildLink = useLinkBuilder();
+
+  return (
+    <View style={styles.listStyles}>
+      {state.routes.map((route, i) => {
+        const focused = i === state.index;
+
+        const onPress = () => {
+          const event = navigation.emit({
+            type: 'drawerItemPress',
+            target: route.key,
+            canPreventDefault: true,
+          });
+
+          if (!event.defaultPrevented) {
+            navigation.dispatch({
+              ...(focused
+                ? DrawerActions.closeDrawer()
+                : CommonActions.navigate({name: route.name, merge: true})),
+              target: state.key,
+            });
+          }
+        };
+
+        const {
+          title,
+          drawerLabel,
+          drawerIcon,
+          drawerLabelStyle,
+          drawerItemStyle,
+          drawerAllowFontScaling,
+        } = descriptors[route.key].options;
+
+        return (
+          <DrawerItem
+            key={route.key}
+            label={
+              drawerLabel !== undefined
+                ? drawerLabel
+                : title !== undefined
+                ? title
+                : route.name
+            }
+            focused={focused}
+            icon={drawerIcon}
+            allowFontScaling={drawerAllowFontScaling}
+            labelStyle={drawerLabelStyle}
+            style={drawerItemStyle}
+            to={buildLink(route.name, route.params)}
+            onPress={onPress}
+          />
+        );
+      })}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  listStyles: {
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  itemStyles: {
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: ColorList.light,
+    marginTop: 12,
+    marginLeft: 12,
+  },
+  linkStyles: {
+    display: 'flex',
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+  },
+});

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
 import {
   TouchableOpacity,
   View,
@@ -102,6 +102,16 @@ const DrawerStack = () => {
   const auth = useContext(AuthContext);
   const {data: lists = [], isLoading} = useGetUserListsQuery(auth.user?.uid);
 
+  const sortedList = useMemo(() => {
+    return [...lists].sort((a, b) => {
+      if (a.createdAt.seconds === b.createdAt.seconds) {
+        return 0;
+      }
+
+      return a.createdAt.seconds > b.createdAt.seconds ? 1 : -1;
+    });
+  }, [lists]);
+
   return (
     <Drawer.Navigator
       screenOptions={({navigation}) => ({
@@ -136,7 +146,7 @@ const DrawerStack = () => {
       drawerContent={props => <DrawerContent {...props} />}>
       <Drawer.Screen name="HomeNav" component={HomeNav} />
       {!isLoading &&
-        lists.map(list => (
+        sortedList.map(list => (
           <Drawer.Screen
             name={list.id}
             key={list.id}

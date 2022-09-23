@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {
   DrawerContentScrollView,
-  DrawerItemList,
+  // DrawerItemList,
   type DrawerContentComponentProps,
 } from '@react-navigation/drawer';
 import Dialog from 'react-native-dialog';
@@ -18,6 +18,7 @@ import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {AuthContext} from '@src/context/AuthContext';
 import Typography from '@src/components/Typography';
+import {DrawerItemList} from '@src/components/DrawerItem';
 import ColorList from '@src/styles/colors';
 import Config from '@src/config';
 import Button from './Button';
