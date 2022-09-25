@@ -19,6 +19,8 @@ import {
   ViewStyle,
   StyleSheet,
   TouchableOpacity,
+  ImageBackground,
+  Dimensions,
 } from 'react-native';
 
 interface Props {
@@ -53,15 +55,15 @@ export const DrawerItem: React.FC<Props> = ({
   allowFontScaling,
   activeTintColor = ColorList.light,
   inactiveTintColor = hexToRgba(ColorList.white, 0.68),
-  activeBackgroundColor = hexToRgba(activeTintColor, 0.12),
-  inactiveBackgroundColor = 'transparent',
+  activeBackgroundColor = hexToRgba(ColorList.white, 0.2),
+  inactiveBackgroundColor = hexToRgba(activeTintColor, 0.12),
   style,
   onPress,
   pressColor,
   pressOpacity,
   ...props
 }) => {
-  const {borderRadius = 4} = StyleSheet.flatten(style || {});
+  const {borderRadius = 16} = StyleSheet.flatten(style || {});
   const color = focused ? activeTintColor : inactiveTintColor;
   const backgroundColor = focused
     ? activeBackgroundColor
@@ -78,9 +80,22 @@ export const DrawerItem: React.FC<Props> = ({
         accessibilityRole="button"
         accessibilityState={{selected: focused}}
         style={styles.linkStyles}>
-        <View>
-          {iconNode}
-          <Text className="text-tahiti-light">{label}</Text>
+        <View style={styles.buttonContent}>
+          <ImageBackground
+            source={require('@src/assets/images/list-icon.png')}
+            resizeMode="contain"
+          />
+          {iconNode && (
+            <View className="absolute bottom-0 right-0">{iconNode}</View>
+          )}
+          <Text
+            className="text-tahiti-light w-full font-bold text-lg"
+            numberOfLines={1}>
+            {label}
+          </Text>
+          <Text className="text-sm text-tahiti-green-100">
+            {Math.round(Math.random() * 10)} products total
+          </Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -161,19 +176,27 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
   },
   itemStyles: {
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: ColorList.light,
-    marginTop: 12,
-    marginLeft: 12,
+    borderRadius: 16,
+    flex: 0,
+    width: Dimensions.get('screen').width / 2 - 15,
+    height: Dimensions.get('screen').height / 6,
+    marginTop: 15,
   },
   linkStyles: {
     display: 'flex',
-    flex: 1,
     paddingHorizontal: 16,
     paddingVertical: 16,
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  buttonContent: {
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    flex: 1,
+    height: 250,
   },
 });

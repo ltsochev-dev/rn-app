@@ -12,6 +12,7 @@ interface Props {
   backgroundColor?: string;
   textColor?: string;
   disabled?: boolean;
+  fullWidth?: boolean;
   startIcon?: ReactNode;
   onPress?: (e: GestureResponderEvent) => void;
 }
@@ -23,8 +24,10 @@ const Button: React.FC<PropsWithChildren<Props>> = ({
   disabled = false,
   startIcon,
   children,
+  fullWidth,
 }) => {
   const minWidth = 200;
+  const width = fullWidth ? '100%' : 'auto';
 
   return (
     <TouchableOpacity
@@ -35,6 +38,7 @@ const Button: React.FC<PropsWithChildren<Props>> = ({
         ...styles.buttonBase,
         backgroundColor,
         minWidth,
+        width,
       }}>
       {startIcon && <View className="mx-2">{startIcon}</View>}
       <Typography style={{...styles.buttonText, color: textColor}}>

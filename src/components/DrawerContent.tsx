@@ -94,12 +94,17 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = props => {
           </Typography>
         </View>
       )}
-      <Text className="text-center text-3xl font-bold text-tahiti-light">
-        Моите списъци
+      <Text className="text-3xl font-bold text-tahiti-light ml-2 my-5">
+        Списъци
       </Text>
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
+      {props.state.routes.length === 0 && (
+        <Text className="text-center">
+          Нямате списъци. Създайте списък от бутона по-долу
+        </Text>
+      )}
       <View className="absolute bottom-0 right-0 opacity-25 pointer-events-none">
         <Image
           source={require('@src/assets/images/recipe-list.png')}
@@ -107,21 +112,23 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = props => {
           resizeMode="contain"
         />
       </View>
-      <View className="flex justify-center items-center mt-10">
+      <View className="flex justify-center items-center my-4 px-2">
         <Button
           backgroundColor={ColorList['green-100']}
           textColor={ColorList.white}
           startIcon={<Icon name="add" size={20} color={ColorList.white} />}
           onPress={() => setAddListVisibility(true)}
-          disabled={loading}>
+          disabled={loading}
+          fullWidth>
           Добави нов списък
         </Button>
       </View>
-      <View className="flex justify-center items-center mt-10 mb-4">
+      <View className="flex justify-center items-center mb-4 px-2">
         <Button
           backgroundColor={ColorList.error}
           textColor={ColorList.white}
-          onPress={onLogoutClick}>
+          onPress={onLogoutClick}
+          fullWidth>
           Излез от профила си
         </Button>
       </View>
