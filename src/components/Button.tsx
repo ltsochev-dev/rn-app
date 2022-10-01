@@ -13,6 +13,7 @@ interface Props {
   textColor?: string;
   disabled?: boolean;
   fullWidth?: boolean;
+  minWidth?: number;
   startIcon?: ReactNode;
   onPress?: (e: GestureResponderEvent) => void;
 }
@@ -25,8 +26,8 @@ const Button: React.FC<PropsWithChildren<Props>> = ({
   startIcon,
   children,
   fullWidth,
+  minWidth = 200,
 }) => {
-  const minWidth = 200;
   const width = fullWidth ? '100%' : 'auto';
 
   return (

@@ -44,9 +44,35 @@ const api = createApi({
       },
       invalidatesTags: ['ShoppingList'],
     }),
+    removeList: build.mutation<void, string>({
+      async queryFn(id) {
+        try {
+          const docRef = await firestore()
+            .collection('shopping-lists')
+            .doc(id)
+            .get();
+
+          if (!docRef.exists) {
+            throw new Error(`Document "${id}" doesn't exist`);
+          }
+          if (docRef.exists) {
+          }
+          return {
+            data: await firestore()
+              .collection('shopping-lists')
+              .doc(id)
+              .delete(),
+          };
+        } catch (e) {
+          return {error: e};
+        }
+      },
+      invalidatesTags: ['ShoppingList'],
+    }),
   }),
 });
 
-export const {useGetUserListsQuery, useAddListMutation} = api;
+export const {useGetUserListsQuery, useAddListMutation, useRemoveListMutation} =
+  api;
 
 export default api;

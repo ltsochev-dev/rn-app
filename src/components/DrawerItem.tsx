@@ -9,8 +9,9 @@ import {
   ParamListBase,
   useLinkBuilder,
 } from '@react-navigation/native';
+import Dialog from 'react-native-dialog';
 import ColorList, {hexToRgba} from '@src/styles/colors';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -21,7 +22,12 @@ import {
   TouchableOpacity,
   ImageBackground,
   Dimensions,
+  Modal,
 } from 'react-native';
+import Button from './Button';
+import CloseBtn from './CloseBtn';
+import Typography from './Typography';
+import {useRemoveListMutation} from '@src/services/lists.service';
 
 interface Props {
   label:
@@ -35,8 +41,9 @@ interface Props {
   to?: string;
   focused: boolean;
   onPress: () => void;
+  onDelete?: () => void;
   activeTintColor?: string;
-  inactiveTintColor: string;
+  inactiveTintColor?: string;
   activeBackgroundColor?: string;
   inactiveBackgroundColor?: string;
   pressColor?: string;
@@ -44,25 +51,25 @@ interface Props {
   labelStyle?: StyleProp<TextStyle>;
   style?: StyleProp<ViewStyle>;
   allowFontScaling?: boolean;
+  list?: IList;
 }
 
 export const DrawerItem: React.FC<Props> = ({
   icon,
   label,
-  labelStyle,
-  to,
   focused = false,
-  allowFontScaling,
   activeTintColor = ColorList.light,
   inactiveTintColor = hexToRgba(ColorList.white, 0.68),
   activeBackgroundColor = hexToRgba(ColorList.white, 0.2),
   inactiveBackgroundColor = hexToRgba(activeTintColor, 0.12),
   style,
   onPress,
-  pressColor,
-  pressOpacity,
+  onDelete,
+  list,
   ...props
 }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false);
   const {borderRadius = 16} = StyleSheet.flatten(style || {});
   const color = focused ? activeTintColor : inactiveTintColor;
   const backgroundColor = focused
@@ -70,6 +77,21 @@ export const DrawerItem: React.FC<Props> = ({
     : inactiveBackgroundColor;
 
   const iconNode = icon ? icon({size: 24, focused, color}) : null;
+
+  const onLongPress = () => {
+    setModalVisible(true);
+  };
+
+  const onDeleteListItemPrompt = () => {
+    setConfirmVisible(true);
+  };
+
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete();
+    }
+  };
+
   return (
     <View
       collapsable={false}
@@ -77,6 +99,8 @@ export const DrawerItem: React.FC<Props> = ({
       style={{...styles.itemStyles, backgroundColor, borderRadius}}>
       <TouchableOpacity
         onPress={onPress}
+        onLongPress={onLongPress}
+        delayLongPress={1000}
         accessibilityRole="button"
         accessibilityState={{selected: focused}}
         style={styles.linkStyles}>
@@ -93,11 +117,52 @@ export const DrawerItem: React.FC<Props> = ({
             numberOfLines={1}>
             {label}
           </Text>
-          <Text className="text-sm text-tahiti-green-100">
-            {Math.round(Math.random() * 10)} products total
-          </Text>
+          {list && (
+            <Text className="text-sm text-tahiti-green-100">
+              {list.products_total} products total
+            </Text>
+          )}
         </View>
       </TouchableOpacity>
+      <Modal
+        animationType="slide"
+        transparent
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View className="flex-1">
+          <View className="modal m-5 bg-white rounded-3xl p-9 items-center shadow-black shadow-sm">
+            <CloseBtn onPress={() => setModalVisible(false)} />
+            <Typography>Do you want to delete &quot;{label}&quot;?</Typography>
+            <View className="my-2">
+              <Button
+                fullWidth
+                backgroundColor={ColorList.error}
+                textColor={ColorList.white}
+                onPress={onDeleteListItemPrompt}>
+                Delete list
+              </Button>
+            </View>
+            <Button fullWidth onPress={() => setModalVisible(false)}>
+              Close window
+            </Button>
+          </View>
+          <Dialog.Container visible={confirmVisible}>
+            <Dialog.Title>Shopping list delete</Dialog.Title>
+            <Dialog.Description>
+              Are you sure you wish to delete &quot;{label}&quot; shopping list?
+            </Dialog.Description>
+            <Dialog.Button
+              label="Cancel"
+              onPress={() => setConfirmVisible(false)}
+            />
+            <Dialog.Button
+              label="Delete"
+              onPress={handleDelete}
+              color={ColorList.error}
+            />
+          </Dialog.Container>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -114,12 +179,12 @@ export const DrawerItemList: React.FC<ListProps> = ({
   descriptors,
 }) => {
   const buildLink = useLinkBuilder();
+  const [removeList] = useRemoveListMutation();
 
   return (
     <View style={styles.listStyles}>
       {state.routes.map((route, i) => {
         const focused = i === state.index;
-
         const onPress = () => {
           const event = navigation.emit({
             type: 'drawerItemPress',
@@ -135,6 +200,10 @@ export const DrawerItemList: React.FC<ListProps> = ({
               target: state.key,
             });
           }
+        };
+
+        const onDelete = () => {
+          removeList(route.name);
         };
 
         const {
@@ -163,6 +232,8 @@ export const DrawerItemList: React.FC<ListProps> = ({
             style={drawerItemStyle}
             to={buildLink(route.name, route.params)}
             onPress={onPress}
+            onDelete={onDelete}
+            list={route.params?.list}
           />
         );
       })}
@@ -176,14 +247,16 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    marginLeft: -10,
+    paddingLeft: 8,
   },
   itemStyles: {
     borderRadius: 16,
     flex: 0,
     width: Dimensions.get('screen').width / 2 - 15,
     height: Dimensions.get('screen').height / 6,
-    marginTop: 15,
+    marginLeft: 10,
+    marginTop: 10,
   },
   linkStyles: {
     display: 'flex',

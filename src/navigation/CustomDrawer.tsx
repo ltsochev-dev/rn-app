@@ -20,7 +20,7 @@ const CustomDrawer = (props: any) => {
       .doc(user?.uid)
       .get()
       .then(documentSnapshot => {
-        console.log(documentSnapshot.data());
+        // console.log(documentSnapshot.data());
       });
   };
 

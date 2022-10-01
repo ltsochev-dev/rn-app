@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import {
   DrawerContentScrollView,
-  // DrawerItemList,
   type DrawerContentComponentProps,
 } from '@react-navigation/drawer';
 import Dialog from 'react-native-dialog';
@@ -100,7 +99,7 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = props => {
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
-      {props.state.routes.length === 0 && (
+      {props.state.routes.length <= 1 && (
         <Text className="text-center">
           Нямате списъци. Създайте списък от бутона по-долу
         </Text>

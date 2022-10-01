@@ -10,7 +10,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {AuthContext} from '@src/context/AuthContext';
 import {useGetUserListsQuery} from '@src/services/lists.service';
-import ColorList, {hexToRgba} from '@src/styles/colors';
+import ColorList from '@src/styles/colors';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import firestore from '@react-native-firebase/firestore';
 import {setActiveList} from '@src/store/lists';
